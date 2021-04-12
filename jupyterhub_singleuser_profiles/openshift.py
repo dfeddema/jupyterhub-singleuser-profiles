@@ -82,6 +82,22 @@ class OpenShift(object):
 
     return result
 
+  def read_numgpu(self, key_name=None):
+    result = {}
+    try:
+      nodes = self.oapi_client.resources.get(kind='Node', api_version='v1')
+    except ApiException as e:
+      if e.status != 404:
+        _LOGGER.error("Error reading a node %s: %s")
+      return result
+      else:
+        node_list = nodes.get()
+         for node in node_list.items():
+           _LOGGER.info("Found these Nodes: %s" % node_list) 
+           result = node.data 
+    return result
+
+
   def decode_secret(self, data):
     base64_bytes = data.encode('utf8')
     secret_bytes = base64.b64decode(base64_bytes)
